@@ -14,13 +14,23 @@
 #*******************************************************************************
 #System specifications for Travis CI
 #*******************************************************************************
+language: python
+
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  
 matrix:
   include:
     - os: linux
       language: generic
+      python: "2.7"
       sudo: required
     - os: osx
       language: generic
+      python: "2.7"
   allow_failures:
     - os: osx
 
