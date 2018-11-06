@@ -1,0 +1,34 @@
+Command line inputs
+ - ../input/GRACE/GRCTellus.JPL.200204_201608.GLO.RL05M_1.MSCNv02CRIv02.nc
+ - ../input/GRACE/CLM4.SCALE_FACTOR.JPL.MSCNv01CRIv01.nc
+ - ../input/SERVIR_STK/Nepal.shp
+ - ../output/SERVIR_STK/GRCTellus.JPL.pnt_tst.shp
+ - ../output/SERVIR_STK/timeseries_Nepal_tst.csv
+ - ../output/SERVIR_STK/map_Nepal_tst.nc
+Read GRACE netCDF file
+ - The number of longitudes is: 720
+ - The number of latitudes is: 360
+ - The number of time steps is: 156
+ - The interval size for longitudes is: 0.5
+ - The interval size for latitudes is: 0.5
+ - The interval size for time is: 24.0
+Read scale factors netCDF file
+ - The number of longitudes is: 720
+ - The number of latitudes is: 360
+Check consistency between netCDF files
+ - The files are consistent
+Read polygon shapefile
+ - The number of polygon features is: 1
+Create a point shapefile with all the GRACE grid cells
+ - New shapefile created
+Create spatial index for the bounds of each point feature
+ - Spatial index created
+Find GRACE grid cells that intersect with polygon
+ - The number of grid cells found is: 51
+Find long-term mean for each intersecting GRACE grid cell
+Compute surface area of each grid cell
+Find number of NoData points in scale factors for shapefile and area
+ - The number of NoData points found is: 0
+ - The area (m2) for the domain is: 1.38862423486e+11
+Compute total terrestrial water storage anomaly timeseries
+Determine time strings
