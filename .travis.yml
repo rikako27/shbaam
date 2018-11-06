@@ -14,23 +14,13 @@
 #*******************************************************************************
 #System specifications for Travis CI
 #*******************************************************************************
-language: python
-
-python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  
 matrix:
   include:
     - os: linux
       language: generic
-      python: "2.7"
       sudo: required
     - os: osx
       language: generic
-      python: "2.7"
   allow_failures:
     - os: osx
 
@@ -50,17 +40,14 @@ before_install:
 #-------------------------------------------------------------------------------
 #Create .netrc file for secure downloads (users need their own credentials)
 #-------------------------------------------------------------------------------
-- echo "machine urs.earthdata.nasa.gov login malaya@uci.edu password Aircarnot1!" >> ~/.netrc
+- echo "machine urs.earthdata.nasa.gov login $NETRC_LOGIN_EDATA password $NETRC_PSWRD_EDATA" >> ~/.netrc
 
 #-------------------------------------------------------------------------------
 #Specific to Linux
 #-------------------------------------------------------------------------------
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update      ; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; sudo apt-get install python3  ; fi
-#------------------- above suppose to include python 3 env delete if not working 
-
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then apt-get --version             ; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y $(grep -v -E '(^#|^$)' requirements.apt) ; fi
+
 
 #-------------------------------------------------------------------------------
 #Specific to OSX
