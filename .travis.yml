@@ -19,14 +19,8 @@ matrix:
     - os: linux
       language: generic
       sudo: required
-
-    - os: linux
-      sudo: required
-      python: "2.7"
-  
     - os: osx
       language: generic
-      python: "2.7"
   allow_failures:
     - os: osx
 
