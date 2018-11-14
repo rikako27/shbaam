@@ -98,7 +98,7 @@ def calculateSurfaceArea(total, num_lat, interest_lat, lon_step, lat_step):
     return areas
 
 def anomalyTimeseries(var, avg, time_steps, total, interest_lon, interest_lat, areas):
-    print('Compute SWE storage anomaly timeseries')
+    print('Compute storage anomaly timeseries')
     anomalies = []
     total_area = sum(areas)
     for time in range(time_steps):
@@ -131,17 +131,21 @@ def createTimes(times):
         time_stamps.append(d.strftime('%m/%d/%Y'))
     return time_stamps
 
-def outputCSV(output_file, fieldnames, times, anomalies):
+def outputCSV(output_file, fieldnames, times, anomalies_dict):
     with open(output_file, mode='w') as csvfile:
         writer = csv.DictWriter(csvfile, dialect='excel', fieldnames=fieldnames)
         dates = createTimes(times)
         writer.writeheader()
         for i in range(len(dates)):
-            writer.writerow({fieldnames[0]: dates[i], fieldnames[1]: anomalies[i]})
+            d = dict()
+            d[fieldnames[0]] = dates[i]
+            for i in range(1, len(fieldnames)):
+                d[fieldnames[i]] = anomalies_dict[fieldnames[i]]
+            writer.writerow(d)
     csvfile.close()
     print('Success -- creating csv file')
 
-def outputNC(output_file, nc4_file, total, interest_lon, interest_lat, time_steps, var, avg):
+def outputNC(output_file, nc4_file, total, interest_lon, interest_lat, time_steps, var_list, avg_dict):
     print('Writing new nc4 file')
     nc4_out = Dataset(output_file, 'w', format='NETCDF4')
 
@@ -167,11 +171,12 @@ def outputNC(output_file, nc4_file, total, interest_lon, interest_lat, time_step
     nc4_out.comment=''
     nc4_out.featureType='timeSeries'
 
-    for i in range(total):
-        lon_index, lat_index = interest_lon[i][0],interest_lat[i][0]
-        long_term_mean = avg[i]
-        for time in range(time_steps):
-            nc4_out[var][time,lat_index,lon_index] = nc4_file.variables[var][time,lat_index,lon_index] - long_term_mean
+    for var in var_list:
+        for i in range(total):
+            lon_index, lat_index = interest_lon[i][0],interest_lat[i][0]
+            long_term_mean = avg_dict[var][i]
+            for time in range(time_steps):
+                nc4_out[var][time,lat_index,lon_index] = nc4_file.variables[var][time,lat_index,lon_index] - long_term_mean
     nc4_out.close()
     print("Success -- creating nc4 file")
 
@@ -217,17 +222,23 @@ if __name__ == "__main__":
     areas = calculateSurfaceArea(total_interest, num_lat, interest_lat, lon_step, lat_step)
 
     #find long-term mean for swe
-    var = files[5]
-    vals = nc4_file.variables[var] #all values in nc4_file
-    avg = findAvg(vals, total_interest, interest_lon, interest_lat, time_steps)
-    anomalies = anomalyTimeseries(vals, avg, time_steps, total_interest, interest_lon, interest_lat, areas)
+    var_list= files[5:]
+    avg_dict = dict()
+    anomalies_dict = dict()
+    for var in var_list:
+        vals = nc4_file.variables[var] #all values in nc4_file
+        avg = findAvg(vals, total_interest, interest_lon, interest_lat, time_steps)
+        anomalies = anomalyTimeseries(vals, avg, time_steps, total_interest, interest_lon, interest_lat, areas)
+        avg_dict[var] = avg
+        anomalies_dict[var] = anomalies
 
     output_csv = files[3]
-    fieldname = ['date', var]
-    outputCSV(output_csv, fieldname, times, anomalies)
+    fieldname = ['date'] + var_list
+    #print(fieldname)
+    outputCSV(output_csv, fieldname, times, anomalies_dict)
 
     output_nc = files[4]
-    outputNC(output_nc, nc4_file, total_interest, interest_lon, interest_lat, time_steps, var, avg)
+    outputNC(output_nc, nc4_file, total_interest, interest_lon, interest_lat, time_steps, var_list, avg_dict)
 
     nc4_file.close()
     polygon.close()
