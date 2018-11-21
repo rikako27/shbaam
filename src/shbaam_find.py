@@ -139,8 +139,8 @@ def outputCSV(output_file, fieldnames, times, anomalies_dict):
         for i in range(len(dates)):
             d = dict()
             d[fieldnames[0]] = dates[i]
-            for i in range(1, len(fieldnames)):
-                d[fieldnames[i]] = anomalies_dict[fieldnames[i]]
+            for j in range(1, len(fieldnames)):
+                d[fieldnames[j]] = anomalies_dict[fieldnames[j]][i]
             writer.writerow(d)
     csvfile.close()
     print('Success -- creating csv file')
